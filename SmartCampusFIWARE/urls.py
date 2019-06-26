@@ -16,10 +16,10 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 
-from FiwareMap.views import mostrarMapa
+from FiwareMap.views import mostrar_mapa
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^mapa/', mostrarMapa)
+    url(r'^mapa/', mostrar_mapa)
 
 ]

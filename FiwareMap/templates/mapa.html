@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<head>
+    <title>Mapa</title>
+
+    <script src="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.3.0/build/ol.js"></script>
+    <link rel="stylesheet" href="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.3.0/css/ol.css">
+
+</head>
+<body>
+<h1>Mapa campus de la UMA</h1>
+
+<div style="width:50%; height:50%" id="map"></div>
+
+<script>
+    var map = new ol.Map({
+        layers: [
+            new ol.layer.Tile({
+                source: new ol.source.OSM()
+            })
+        ],
+        target: 'map',
+        view: new ol.View({
+            center: ol.proj.fromLonLat([-4.472176, 36.716432]),
+            zoom: 17
+        })
+    });
+    map.addControl(new ol.control.ZoomSlider());
+
+</script>
+
+</body>
+</html>

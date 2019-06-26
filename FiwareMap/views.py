@@ -10,16 +10,16 @@ user = 'usr_fraterni_lab'
 password = 'TVBjMdCd'
 
 # Url plataforma FIWARE
-urlPlataforma = 'https://150.214.58.178'
+url_plataforma = 'https://150.214.58.178'
 
 # url para pedir token
-puertoToken = ':6001'
-pathToken = '/v3/auth/tokens'
+puerto_token = ':6001'
+path_token = '/v3/auth/tokens'
 
 # url para pedir todas las entidades
-puertoEntidades = ':2026'
-pathEntidades = '/v2/entities'
-opcionesEntidades = '?limit=1000&options=count'
+puerto_entidades = ':2026'
+path_entidades = '/v2/entities'
+opciones_entidades = '?limit=1000&options=count'
 
 
 def obtenerToken():
@@ -49,29 +49,33 @@ def obtenerToken():
             }
         }
     }
-    urlToken = urlPlataforma + puertoToken + pathToken
-    r = requests.post(urlToken, data=JsonResponse(data), headers={'Content-Type': 'application/json'}, verify=False)
+    url_token = url_plataforma + puerto_token + path_token
+    r = requests.post(url_token, data=JsonResponse(data), headers={'Content-Type': 'application/json'}, verify=False)
 
     return r.headers.get('X-Subject-Token')
 
 
-def pedirEntidades(token):
-    urlEntidades = urlPlataforma + puertoEntidades + pathEntidades + opcionesEntidades
-    headersEntidades = {'Fiware-Service': 'smart_campus_uma', 'Fiware-ServicePath': '/fraterni_lab',
-                        'X-Auth-Token': token
-                        }
+def pedir_entidades(token):
+    url_entidades = url_plataforma + puerto_entidades + path_entidades + opciones_entidades
+    headers_entidades = {'Fiware-Service': 'smart_campus_uma', 'Fiware-ServicePath': '/fraterni_lab',
+                         'X-Auth-Token': token
+                         }
     # verify = False para saltarse el tema de los certificados
 
-    return requests.get(urlEntidades, headers=headersEntidades, verify=False)
+    return requests.get(url_entidades, headers=headers_entidades, verify=False)
 
 
-def mostrarMapa(request):
+def mostrar_mapa(request):
     # 1 - pedimos el token
     token = obtenerToken()
     # print('token = ' + token)
 
     # 2 - Pedimos las entidades que vamos a mostrar en el mapa
-    entidades = pedirEntidades(token)
+    entidades = pedir_entidades(token)
     # print('respuesta: ' + entidades.text)
 
-    return JsonResponse(entidades.json(), safe=False)
+    # return JsonResponse(entidades.json(), safe=False)
+    context = {
+        'entidades': entidades,
+    }
+    return render(request, 'mapa.html', context=context)
