@@ -9,8 +9,35 @@
 <body>
 <h1>Mapa campus de la UMA</h1>
 {% csrf_token %}
+
+<div id="map" style="width: 60%; height: 60%"></div>
 <p id="demo"></p>
 <script>
+    var arbolesSource = new ol.source.Vector();
+    var capaArboles = new ol.layer.Vector({
+        source: arbolesSource
+    });
+
+    var map = new ol.Map({
+        layers: [
+            new ol.layer.Tile({
+                source: new ol.source.OSM()
+            }),
+            capaArboles
+        ],
+        target: 'map',
+        view: new ol.View({
+            center: ol.proj.fromLonLat([-4.472176, 36.716432]),
+            zoom: 17
+        })
+    });
+    map.addControl(new ol.control.ZoomSlider());
+
+    var feature = new ol.Feature(obj[0])
+    var coordinate = transform([parseFloat(obj[0].coordinates[0]), parseFloat(obj[0].coordinates[0])]);
+    var geometry = new ol.geom.Point(coordinate)
+    feature.setGeometry(geometry)
+    arbolesSource.addFeatures(feature)
     console.log("test")
     //var obj = [{"title": "meeting", "start": "ahora"}, {"title": "meeting", "start": "ahora"}]
     var obj = {{ entidades|safe }};

@@ -19,7 +19,7 @@ path_token = '/v3/auth/tokens'
 # url para pedir todas las entidades
 puerto_entidades = ':2026'
 path_entidades = '/v2/entities?type=Arbol'
-opciones_entidades = '&limit=1&options=count'
+opciones_entidades = '&limit=1000&options=count'
 
 
 def obtenerToken():
