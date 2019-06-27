@@ -62,7 +62,7 @@ def pedir_entidades(token):
                          }
     # verify = False para saltarse el tema de los certificados
     obj = requests.get(url_entidades, headers=headers_entidades, verify=False)
-    print(obj.text)
+    #print(obj.text)
     return obj.json()
 
 
@@ -74,7 +74,7 @@ def mostrar_mapa(request):
     # 2 - Pedimos las entidades que vamos a mostrar en el mapa
     entidades = pedir_entidades(token)
     # print('respuesta: ' + entidades.text)
-    print (entidades)
+    #print (entidades)
     # return JsonResponse(entidades.json(), safe=False)
     # entidades = JsonResponse(entidades.json(), safe=False)
     num = 500

@@ -10,14 +10,58 @@
 <h1>Mapa campus de la UMA</h1>
 {% csrf_token %}
 
-<div id="map" style="width: 60%; height: 60%"></div>
+<div id="map" class="map" style="width: 60%; height: 60%"></div>
 <p id="demo"></p>
 <script>
+    /*import Feature from 'ol/Feature.js';
+    import Map from 'ol/Map.js';
+    import View from 'ol/View.js';
+    import GeoJSON from 'ol/format/GeoJSON.js';
+    import Circle from 'ol/geom/Circle.js';
+    import {Tile as TileLayer, Vector as VectorLayer} from 'ol/layer.js';
+    import {OSM, Vector as VectorSource} from 'ol/source.js';
+    import {Circle as CircleStyle, Fill, Stroke, Style} from 'ol/style.js';*/
+
+
+    //ESTILOS==============================================
+    var image = new ol.style.Circle({
+        radius: 5,
+        fill: null,
+        stroke: new ol.style.Stroke({color: 'red', width: 1})
+      });
+
+    var styles = {
+        'Point': new ol.style.Style({
+        image: image
+    })}
+    var styleFunction = function(feature) {
+        return styles[feature.getGeometry().getType()];
+      };
+//==================================================
+
     var arbolesSource = new ol.source.Vector();
     var capaArboles = new ol.layer.Vector({
-        source: arbolesSource
+        source: arbolesSource,
+        style: styleFunction
     });
 
+
+
+    var obj = {{ entidades|safe }};
+
+    var feature = new ol.Feature();
+    //var coordenadas = [parseFloat(obj[0].location.value.coordinates[0]), parseFloat(obj[0].location.value.coordinates[1])];
+    var coordenadas = obj[0].location.value.coordinates;
+
+    var stringifyFunc = ol.coordinate.createStringXY(5);
+    var out = stringifyFunc(coordenadas);
+
+    var geometry = new ol.geom.Point(coordenadas);
+
+    feature.setGeometry(geometry);
+    arbolesSource.addFeatures(feature);
+
+    //***** Constructor MAPA *****************
     var map = new ol.Map({
         layers: [
             new ol.layer.Tile({
@@ -27,24 +71,19 @@
         ],
         target: 'map',
         view: new ol.View({
-            center: ol.proj.fromLonLat([-4.472176, 36.716432]),
+            //center: ol.proj.fromLonLat([-4.472176, 36.716432]),
+            center: ol.proj.fromLonLat([-4.47128, 36.717]),
             zoom: 17
         })
     });
     map.addControl(new ol.control.ZoomSlider());
+ //**********************
 
-    var feature = new ol.Feature(obj[0])
-    var coordinate = transform([parseFloat(obj[0].coordinates[0]), parseFloat(obj[0].coordinates[0])]);
-    var geometry = new ol.geom.Point(coordinate)
-    feature.setGeometry(geometry)
-    arbolesSource.addFeatures(feature)
+    console.log('Coordenadas:' + out);
     console.log("test")
     //var obj = [{"title": "meeting", "start": "ahora"}, {"title": "meeting", "start": "ahora"}]
-    var obj = {{ entidades|safe }};
-
-    document.getElementById('demo').innerHTML = obj[0].id;
-    console.log(obj)
-    //print('hola');
+    //document.getElementById('demo').innerHTML = arbolesSource.getFeatures();
+    //console.log(obj)
 </script>
 
 </body>
