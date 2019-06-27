@@ -8,24 +8,16 @@
 </head>
 <body>
 <h1>Mapa campus de la UMA</h1>
-
-<div style="width:50%; height:50%" id="map"></div>
-
+{% csrf_token %}
+<p id="demo"></p>
 <script>
-    var map = new ol.Map({
-        layers: [
-            new ol.layer.Tile({
-                source: new ol.source.OSM()
-            })
-        ],
-        target: 'map',
-        view: new ol.View({
-            center: ol.proj.fromLonLat([-4.472176, 36.716432]),
-            zoom: 17
-        })
-    });
-    map.addControl(new ol.control.ZoomSlider());
+    console.log("test")
+    //var obj = [{"title": "meeting", "start": "ahora"}, {"title": "meeting", "start": "ahora"}]
+    var obj = {{ entidades|safe }};
 
+    document.getElementById('demo').innerHTML = obj[0].id;
+    console.log(obj)
+    //print('hola');
 </script>
 
 </body>

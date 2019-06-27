@@ -18,8 +18,8 @@ path_token = '/v3/auth/tokens'
 
 # url para pedir todas las entidades
 puerto_entidades = ':2026'
-path_entidades = '/v2/entities'
-opciones_entidades = '?limit=1000&options=count'
+path_entidades = '/v2/entities?type=Arbol'
+opciones_entidades = '&limit=1&options=count'
 
 
 def obtenerToken():
@@ -61,8 +61,9 @@ def pedir_entidades(token):
                          'X-Auth-Token': token
                          }
     # verify = False para saltarse el tema de los certificados
-
-    return requests.get(url_entidades, headers=headers_entidades, verify=False)
+    obj = requests.get(url_entidades, headers=headers_entidades, verify=False)
+    print(obj.text)
+    return obj.json()
 
 
 def mostrar_mapa(request):
@@ -73,9 +74,13 @@ def mostrar_mapa(request):
     # 2 - Pedimos las entidades que vamos a mostrar en el mapa
     entidades = pedir_entidades(token)
     # print('respuesta: ' + entidades.text)
-
+    print (entidades)
     # return JsonResponse(entidades.json(), safe=False)
+    # entidades = JsonResponse(entidades.json(), safe=False)
+    num = 500
+    # print (json.dumps(entidades))
     context = {
-        'entidades': entidades,
+        'entidades': json.dumps(entidades),
+        'numero': num,
     }
     return render(request, 'mapa.html', context=context)
