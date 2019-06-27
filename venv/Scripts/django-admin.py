@@ -1,4 +1,4 @@
-#!C:\Users\SmartCampus1\PycharmProjects\SmartCampusUMA\SmartCampusFIWARE\venv\Scripts\python.exe
+#!D:\Users\Jose\Documents\Universidad\SmartUMA\Repositorios\SmartCampusFIWARE\venv\Scripts\python.exe
 from django.core import management
 
 if __name__ == "__main__":
