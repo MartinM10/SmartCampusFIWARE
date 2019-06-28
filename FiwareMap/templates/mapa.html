@@ -5,12 +5,17 @@
     <script src="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.3.0/build/ol.js"></script>
     <link rel="stylesheet" href="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.3.0/css/ol.css">
 
+
 </head>
 <body>
 <h1>Mapa campus de la UMA</h1>
 {% csrf_token %}
 
-<div id="map" class="map" style="width: 60%; height: 60%"></div>
+<div id="map" class="map" style="width: 100%; height: 70%"></div>
+<div id="popup" class="ol-popup">
+    <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+    <div id="popup-content"></div>
+</div>
 <p id="demo"></p>
 <script>
     /*import Feature from 'ol/Feature.js';
@@ -24,42 +29,53 @@
 
 
     //ESTILOS==============================================
-    var image = new ol.style.Circle({
-        radius: 5,
-        fill: null,
-        stroke: new ol.style.Stroke({color: 'red', width: 1})
-      });
 
-    var styles = {
+    /*var styles = {
         'Point': new ol.style.Style({
         image: image
     })}
     var styleFunction = function(feature) {
         return styles[feature.getGeometry().getType()];
-      };
-//==================================================
-
-    var arbolesSource = new ol.source.Vector();
-    var capaArboles = new ol.layer.Vector({
-        source: arbolesSource,
-        style: styleFunction
-    });
-
-
+      };*/
+    //==================================================
 
     var obj = {{ entidades|safe }};
+    //var coordenadas = [parseFloat(obj[0].location.value.coordinates[1]), parseFloat(obj[0].location.value.coordinates[0])];
+    var coordenadas = ol.proj.fromLonLat(obj[0].location.value.coordinates);
+    document.getElementById('demo').innerHTML = ["Coordenadas Brutas: " + coordenadas];
+    //var tipo = obj[0].location.value.type;
 
-    var feature = new ol.Feature();
-    //var coordenadas = [parseFloat(obj[0].location.value.coordinates[0]), parseFloat(obj[0].location.value.coordinates[1])];
-    var coordenadas = obj[0].location.value.coordinates;
+    //****POP-UP*************************************************************************************************
+    /**
+     * Elements that make up the popup.
+     */
+    var container = document.getElementById('popup');
+    var content = document.getElementById('popup-content');
+    var closer = document.getElementById('popup-closer');
 
-    var stringifyFunc = ol.coordinate.createStringXY(5);
-    var out = stringifyFunc(coordenadas);
 
-    var geometry = new ol.geom.Point(coordenadas);
+    /**
+     * Create an overlay to anchor the popup to the map.
+     */
+    var overlay = new ol.Overlay({
+        element: container,
+        autoPan: true,
+        autoPanAnimation: {
+            duration: 250
+        }
+    });
 
-    feature.setGeometry(geometry);
-    arbolesSource.addFeatures(feature);
+    /**
+     * Add a click handler to hide the popup.
+     * @return {boolean} Don't follow the href.
+     */
+    closer.onclick = function () {
+        overlay.setPosition(undefined);
+        closer.blur();
+        return false;
+    };
+    //*****************************************************************************************************************
+
 
     //***** Constructor MAPA *****************
     var map = new ol.Map({
@@ -67,19 +83,73 @@
             new ol.layer.Tile({
                 source: new ol.source.OSM()
             }),
-            capaArboles
         ],
+        overlays: [overlay],
         target: 'map',
         view: new ol.View({
             //center: ol.proj.fromLonLat([-4.472176, 36.716432]),
-            center: ol.proj.fromLonLat([-4.47128, 36.717]),
-            zoom: 17
+            center: coordenadas,
+            zoom: 15
         })
     });
     map.addControl(new ol.control.ZoomSlider());
- //**********************
 
-    console.log('Coordenadas:' + out);
+
+    var geometry = new ol.geom.Point(coordenadas);
+    //document.getElementById('demo').innerHTML = ["Coordenadas Brutas: " + coordenadas];
+    var feature = new ol.Feature(geometry);
+    var arbolesSource = new ol.source.Vector();
+
+    arbolesSource.addFeature(feature);
+
+    var capaArboles = new ol.layer.Vector({
+        source: arbolesSource,
+        //style: styleFunction
+    });
+
+    /*
+    // Geometrias
+    var point = new ol.geom.Point(
+        ol.proj.transform([3,50], 'EPSG:4326', 'EPSG:3857')
+    );
+    var circle = new ol.geom.Circle(
+        ol.proj.transform([2.1833, 41.3833], 'EPSG:4326', 'EPSG:3857'),
+        10000
+    );
+
+    // Entidades
+    var pointFeature = new ol.Feature(point);
+    var circleFeature = new ol.Feature(circle);
+
+    // Fuentes
+    var vectorSource = new ol.source.Vector({
+        projection: 'EPSG:4326'
+    });
+    vectorSource.addFeatures([pointFeature, circleFeature]);
+
+    // Capas vectoriales
+    var vectorLayer = new ol.layer.Vector({
+      source: vectorSource
+    });*/
+
+
+    // Añadir capa vectorial al mapa
+    map.addLayer(capaArboles);
+    //**********************
+
+     /**
+     * Add a click handler to the map to render the popup.
+     */
+    map.on('singleclick', function (evt) {
+        var coordinate = evt.coordinate;
+        var hdms = ol.coordinate.toStringHDMS(ol.proj.toLonLat(coordinate));
+
+        content.innerHTML = '<p>You clicked here:</p><code>' + hdms +
+            '</code>';
+        overlay.setPosition(coordinate);
+    });
+
+
     console.log("test")
     //var obj = [{"title": "meeting", "start": "ahora"}, {"title": "meeting", "start": "ahora"}]
     //document.getElementById('demo').innerHTML = arbolesSource.getFeatures();
@@ -87,4 +157,55 @@
 </script>
 
 </body>
+
+<style>
+    .ol-popup {
+        position: absolute;
+        background-color: white;
+        -webkit-filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
+        filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
+        padding: 15px;
+        border-radius: 10px;
+        border: 1px solid #cccccc;
+        bottom: 12px;
+        left: -50px;
+        min-width: 280px;
+    }
+
+    .ol-popup:after, .ol-popup:before {
+        top: 100%;
+        border: solid transparent;
+        content: " ";
+        height: 0;
+        width: 0;
+        position: absolute;
+        pointer-events: none;
+    }
+
+    .ol-popup:after {
+        border-top-color: white;
+        border-width: 10px;
+        left: 48px;
+        margin-left: -10px;
+    }
+
+    .ol-popup:before {
+        border-top-color: #cccccc;
+        border-width: 11px;
+        left: 48px;
+        margin-left: -11px;
+    }
+
+    .ol-popup-closer {
+        text-decoration: none;
+        position: absolute;
+        top: 2px;
+        right: 8px;
+    }
+
+    .ol-popup-closer:after {
+        content: "✖";
+    }
+</style>
+
 </html>
