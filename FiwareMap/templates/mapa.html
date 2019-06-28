@@ -5,9 +5,7 @@
 
     <script src="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.3.0/build/ol.js"></script>
 
-    <link rel="stylesheet" href="css/popup.css" title="EstiloMapa" type="text\css">
-    <link rel="stylesheet" href="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.3.0/css/ol.css"
-          title="EstiloMapa" type="text\css">
+    <link rel="stylesheet" href="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.3.0/css/ol.css">
 
 
 </head>
@@ -42,6 +40,66 @@
         return styles[feature.getGeometry().getType()];
       };*/
     //==================================================
+ //FUNCIONES PARA EL CLUSTER***************************************
+    // this function computes a circle style
+    // based on the size of a cluster
+    // the style is cached.
+    function getCircleStyle(size) {
+      var key = 'circle' + size;
+      if (!cache[key]) {
+        cache[key] = new ol.style.Style({
+          image: new ol.style.Circle({
+            radius: 8 + size/10,
+            fill: new ol.style.Fill({
+              color: 'rgb(97, 151, 255)'
+            }),
+            stroke: new ol.style.Stroke({
+              color: 'white',
+              width: 2
+            })
+          })
+        });
+      }
+      return cache[key];
+    }
+
+    // this function computes a text style
+    // based on the size of a cluster
+    // the style is cached
+    function getTextStyle(text) {
+      var key = 'text' + text;
+      if (!cache[key]) {
+        cache[key] = new ol.style.Style({
+          text: new ol.style.Text({
+            font: '10px sans-serif',
+            text: text,
+            textBaseline: 'alphabetic',
+            offsetY: 4,
+            fill: new ol.style.Fill({
+              color: 'white'
+            })
+          })
+        });
+      }
+      return cache[key];
+    }
+
+    // the style function for the cluster layer combines
+    // a circle and a text style based on the size of the cluster
+    function clusterStyle(feature, resolution) {
+      var size = feature.get('features').length;
+      var pointStyle = getCircleStyle(size);
+      if(size>1){
+          var textStyle = getTextStyle(size.toString());
+      }else{
+          var textStyle = getTextStyle("");
+      }
+
+      return [pointStyle, textStyle];
+    }
+//.........................................................................
+
+
 
     var arbolesSource = new ol.source.Vector();
     var obj = {{ entidades|safe }};
@@ -57,6 +115,20 @@
         arbolesSource.addFeature(feature);
 
     }
+    // a cluster source can group photos that are too close
+    var clusterSource = new ol.source.Cluster({
+      source: arbolesSource,
+      distance: 10
+    });
+    var vectorLayer = new ol.layer.Vector({
+      source: clusterSource,
+      style: clusterStyle
+    });
+
+    var cache = {};
+
+
+
     //document.getElementById('demo').innerHTML = ["Coordenadas Brutas: " + coordenadas];
     //var tipo = obj[0].location.value.type;
 
@@ -112,7 +184,8 @@
 
 
     var capaArboles = new ol.layer.Vector({
-        source: arbolesSource,
+        source: clusterSource,
+        style: clusterStyle
         //style: styleFunction
     });
 
@@ -132,6 +205,14 @@
             '</code>';
         overlay.setPosition(coordinate);
     });*/
+    map.on('singleclick', function (evt) {
+        var coordinate = evt.coordinate;
+        var hdms = ol.coordinate.toStringHDMS(ol.proj.toLonLat(coordinate));
+
+        content.innerHTML = '<p>You clicked here:</p><code>' + hdms +
+            '</code>';
+        overlay.setPosition(coordinate);
+    });
 
 
     console.log("test")
@@ -140,7 +221,60 @@
     //console.log(obj)
 </script>
 
+
+
+
 </body>
+
+<style>
+    .ol-popup {
+    position: absolute;
+    background-color: white;
+    -webkit-filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
+    filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid #cccccc;
+    bottom: 12px;
+    left: -50px;
+    min-width: 280px;
+}
+
+.ol-popup:after, .ol-popup:before {
+    top: 100%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+}
+
+.ol-popup:after {
+    border-top-color: white;
+    border-width: 10px;
+    left: 48px;
+    margin-left: -10px;
+}
+
+.ol-popup:before {
+    border-top-color: #cccccc;
+    border-width: 11px;
+    left: 48px;
+    margin-left: -11px;
+}
+
+.ol-popup-closer {
+    text-decoration: none;
+    position: absolute;
+    top: 2px;
+    right: 8px;
+}
+
+.ol-popup-closer:after {
+    content: "✖";
+}
+</style>
 
 
 </html>
