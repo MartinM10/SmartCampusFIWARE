@@ -29,7 +29,7 @@
     import {OSM, Vector as VectorSource} from 'ol/source.js';
     import {Circle as CircleStyle, Fill, Stroke, Style} from 'ol/style.js';*/
 
-
+    var coordenadasIniciales = ol.proj.fromLonLat([-4.472176, 36.716432]);
     //ESTILOS==============================================
 
     /*var styles = {
@@ -40,65 +40,147 @@
         return styles[feature.getGeometry().getType()];
       };*/
     //==================================================
- //FUNCIONES PARA EL CLUSTER***************************************
+
+
+    //FUNCIONES PARA EL CLUSTER***************************************
     // this function computes a circle style
     // based on the size of a cluster
     // the style is cached.
     function getCircleStyle(size) {
-      var key = 'circle' + size;
-      if (!cache[key]) {
-        cache[key] = new ol.style.Style({
-          image: new ol.style.Circle({
-            radius: 8 + size/10,
-            fill: new ol.style.Fill({
-              color: 'rgb(97, 151, 255)'
-            }),
-            stroke: new ol.style.Stroke({
-              color: 'white',
-              width: 2
-            })
-          })
-        });
-      }
-      return cache[key];
+        var key = 'circle' + size;
+        if (!cache[key]) {
+            if (size > 1) {
+                cache[key] = new ol.style.Style({
+                    image: new ol.style.Circle({
+                        radius: 8 + size / 10,
+                        fill: new ol.style.Fill({
+                            color: 'rgb(97, 151, 255)'
+                        }),
+                        stroke: new ol.style.Stroke({
+                            color: 'white',
+                            width: 2
+                        })
+                    })
+                });
+            } else {
+                cache[key] = new ol.style.Style({
+                    image: new ol.style.Icon({
+                        anchor: [0.5, 46],
+                        anchorXUnits: 'fraction',
+                        anchorYUnits: 'pixels',
+                        opacity: 1,
+                        scale: 0.5,
+                        src: 'http://osm.uma.es/Iconos/Arbol/icon_tree_color.png'
+
+                    })
+                });
+            }
+        }
+
+        return cache[key];
     }
 
     // this function computes a text style
     // based on the size of a cluster
     // the style is cached
     function getTextStyle(text) {
-      var key = 'text' + text;
-      if (!cache[key]) {
-        cache[key] = new ol.style.Style({
-          text: new ol.style.Text({
-            font: '10px sans-serif',
-            text: text,
-            textBaseline: 'alphabetic',
-            offsetY: 4,
-            fill: new ol.style.Fill({
-              color: 'white'
-            })
-          })
-        });
-      }
-      return cache[key];
+        var key = 'text' + text;
+        if (!cache[key]) {
+            cache[key] = new ol.style.Style({
+                text: new ol.style.Text({
+                    font: '10px sans-serif',
+                    text: text,
+                    textBaseline: 'alphabetic',
+                    offsetY: 4,
+                    fill: new ol.style.Fill({
+                        color: 'white'
+                    })
+                })
+            });
+        }
+        return cache[key];
     }
 
     // the style function for the cluster layer combines
     // a circle and a text style based on the size of the cluster
     function clusterStyle(feature, resolution) {
-      var size = feature.get('features').length;
-      var pointStyle = getCircleStyle(size);
-      if(size>1){
-          var textStyle = getTextStyle(size.toString());
-      }else{
-          var textStyle = getTextStyle("");
-      }
+        var size = feature.get('features').length;
+        var pointStyle = getCircleStyle(size);
+        if (size > 1) {
+            var textStyle = getTextStyle(size.toString());
+        } else {
+            var textStyle = getTextStyle("");
+        }
 
-      return [pointStyle, textStyle];
+        return [pointStyle, textStyle];
     }
-//.........................................................................
 
+    //.........................................................................
+
+    //Estilo Interaccion
+    function flyTo(location, done) {
+        var duration = 1500;
+        var zoom = view.getZoom();
+        var parts = 2;
+        var called = false;
+
+        function callback(complete) {
+            --parts;
+            if (called) {
+                return;
+            }
+            if (parts === 0 || !complete) {
+                called = true;
+                done(complete);
+            }
+        }
+
+        view.animate({
+            center: location,
+            duration: duration
+        }, callback);
+        view.animate({
+            zoom: zoom - 0.2,
+            duration: duration / 2
+        }, {
+            zoom: zoom + 2,
+            duration: duration / 2
+        }, callback);
+    }
+
+    function styleSelectArbol(feature, resolution) {
+        var size = feature.get('features').length;
+
+        var pointStyle = getCircleStyle(size);
+        var coordenadas = feature.get('features')[0].getGeometry().getCoordinates();
+        if (size > 1) {
+            //Acerco
+            console.log(typeof coordenadas)
+            console.log(coordenadas);
+            flyTo(coordenadas, function () {
+            });
+            selectArbol.getFeatures().clear();
+            return
+        } else {
+            var hdms = ol.coordinate.toStringHDMS(ol.proj.toLonLat(coordenadas));
+            content.innerHTML = '<p>You clicked here:</p><code>' + hdms + '</code>';
+            overlay.setPosition(coordenadas);
+
+
+            estilo = new ol.style.Style({
+                    image: new ol.style.Icon({
+                        anchor: [0.5, 46],
+                        anchorXUnits: 'fraction',
+                        anchorYUnits: 'pixels',
+                        opacity: 1,
+                        scale: 0.5,
+                        src: 'http://osm.uma.es/Iconos/Arbol/icon_tree_Negativo.png'
+
+                    })
+                });
+            return estilo;
+        }
+    }
 
 
     var arbolesSource = new ol.source.Vector();
@@ -107,7 +189,7 @@
     //var coordenadas = ol.proj.fromLonLat(obj[0].location.value.coordinates);
 
     var n_entidades = obj.length;
-    for(var i =0; i<n_entidades; i++){
+    for (var i = 0; i < n_entidades; i++) {
         var coordenadas = ol.proj.fromLonLat(obj[i].location.value.coordinates);
         var geometry = new ol.geom.Point(coordenadas);
         //document.getElementById('demo').innerHTML = ["Coordenadas Brutas: " + coordenadas];
@@ -117,16 +199,15 @@
     }
     // a cluster source can group photos that are too close
     var clusterSource = new ol.source.Cluster({
-      source: arbolesSource,
-      distance: 10
+        source: arbolesSource,
+        distance: 15
     });
     var vectorLayer = new ol.layer.Vector({
-      source: clusterSource,
-      style: clusterStyle
+        source: clusterSource,
+        style: clusterStyle
     });
 
     var cache = {};
-
 
 
     //document.getElementById('demo').innerHTML = ["Coordenadas Brutas: " + coordenadas];
@@ -165,6 +246,12 @@
 
 
     //***** Constructor MAPA *****************
+
+    var view = new ol.View({
+        center: coordenadasIniciales,
+        zoom: 10
+    })
+
     var map = new ol.Map({
         layers: [
             new ol.layer.Tile({
@@ -173,14 +260,9 @@
         ],
         overlays: [overlay],
         target: 'map',
-        view: new ol.View({
-            center: ol.proj.fromLonLat([-4.472176, 36.716432]),
-            zoom: 10
-        })
+        view: view,
     });
     map.addControl(new ol.control.ZoomSlider());
-
-
 
 
     var capaArboles = new ol.layer.Vector({
@@ -192,7 +274,29 @@
 
     // Añadir capa vectorial al mapa
     map.addLayer(capaArboles);
-    //**********************
+
+    var selectArbol = new ol.interaction.Select({
+            layers: [capaArboles],
+            style: styleSelectArbol
+
+
+        })
+    ;
+
+
+    map.addInteraction(selectArbol);
+
+    //Cambios de estilo del cursor para que salga la mano señalando cuando haya un elemento ==============
+    map.on('pointermove', function (e) {
+        if (e.dragging) {
+            $(element).popover('destroy');
+            return;
+        }
+        var pixel = map.getEventPixel(e.originalEvent);
+        var hit = map.hasFeatureAtPixel(pixel);
+        map.getTargetElement().style.cursor = hit ? 'pointer' : '';
+    });
+    //=====================================================================================================
 
     /**
      * Add a click handler to the map to render the popup.
@@ -204,76 +308,68 @@
         content.innerHTML = '<p>You clicked here:</p><code>' + hdms +
             '</code>';
         overlay.setPosition(coordinate);
-    });*/
-    map.on('singleclick', function (evt) {
-        var coordinate = evt.coordinate;
-        var hdms = ol.coordinate.toStringHDMS(ol.proj.toLonLat(coordinate));
-
-        content.innerHTML = '<p>You clicked here:</p><code>' + hdms +
-            '</code>';
-        overlay.setPosition(coordinate);
     });
+    */
 
 
     console.log("test")
+
     //var obj = [{"title": "meeting", "start": "ahora"}, {"title": "meeting", "start": "ahora"}]
     //document.getElementById('demo').innerHTML = arbolesSource.getFeatures();
     //console.log(obj)
 </script>
 
 
-
-
 </body>
 
 <style>
     .ol-popup {
-    position: absolute;
-    background-color: white;
-    -webkit-filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
-    filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
-    padding: 15px;
-    border-radius: 10px;
-    border: 1px solid #cccccc;
-    bottom: 12px;
-    left: -50px;
-    min-width: 280px;
-}
+        position: absolute;
+        background-color: white;
+        -webkit-filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
+        filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
+        padding: 15px;
+        border-radius: 10px;
+        border: 1px solid #cccccc;
+        bottom: 30px;
+        left: -50px;
+        min-width: 280px;
+    }
 
-.ol-popup:after, .ol-popup:before {
-    top: 100%;
-    border: solid transparent;
-    content: " ";
-    height: 0;
-    width: 0;
-    position: absolute;
-    pointer-events: none;
-}
+    .ol-popup:after, .ol-popup:before {
+        top: 100%;
+        border: solid transparent;
+        content: " ";
+        height: 0;
+        width: 0;
+        position: absolute;
+        pointer-events: none;
+    }
 
-.ol-popup:after {
-    border-top-color: white;
-    border-width: 10px;
-    left: 48px;
-    margin-left: -10px;
-}
+    .ol-popup:after {
+        border-top-color: white;
+        border-width: 10px;
+        left: 48px;
+        margin-left: -10px;
+    }
 
-.ol-popup:before {
-    border-top-color: #cccccc;
-    border-width: 11px;
-    left: 48px;
-    margin-left: -11px;
-}
+    .ol-popup:before {
+        border-top-color: #cccccc;
+        border-width: 11px;
+        left: 48px;
+        margin-left: -11px;
+    }
 
-.ol-popup-closer {
-    text-decoration: none;
-    position: absolute;
-    top: 2px;
-    right: 8px;
-}
+    .ol-popup-closer {
+        text-decoration: none;
+        position: absolute;
+        top: 2px;
+        right: 8px;
+    }
 
-.ol-popup-closer:after {
-    content: "✖";
-}
+    .ol-popup-closer:after {
+        content: "✖";
+    }
 </style>
 
 
