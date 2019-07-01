@@ -35,12 +35,12 @@
 
     //Función para buscar en un json========================================
 
-    function buscarID_JSON(data_json, id_buscada){
-        $.each(data_json, function(i, v) {
-        if (v.id == id_buscada) {
-            return v;
-        }
-    });
+    function buscarID_JSON(data_json, id_buscada) {
+        $.each(data_json, function (i, v) {
+            if (v.id == id_buscada) {
+                return v;
+            }
+        });
     }
 
 
@@ -168,13 +168,17 @@
             return
         } else {
             var hdms = ol.coordinate.toStringHDMS(ol.proj.toLonLat(coordenadas));
+            var coord = ol.proj.toLonLat(coordenadas);
+
             var id = feature.get('features')[0].getId();
 
             //var datoActual = buscarID_JSON(obj, id);
 
 
             content.innerHTML = '<p>ID: ' + id + '</p>' +
-                '<p>Coordenadas: ' + hdms + '</p>';
+                '<p>Coordenadas: ' + hdms + '</p>' +
+                '<p>Coordenadas: ' + coord + '</p>'
+
             overlay.setPosition(coordenadas);
 
 
