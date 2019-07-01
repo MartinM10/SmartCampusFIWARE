@@ -18,17 +18,9 @@
     <a href="#" id="popup-closer" class="ol-popup-closer"></a>
     <div id="popup-content"></div>
 </div>
+<div id="photo-info"></div>
 <p id="demo"></p>
 <script>
-    /*import Feature from 'ol/Feature.js';
-    import Map from 'ol/Map.js';
-    import View from 'ol/View.js';
-    import GeoJSON from 'ol/format/GeoJSON.js';
-    import Circle from 'ol/geom/Circle.js';
-    import {Tile as TileLayer, Vector as VectorLayer} from 'ol/layer.js';
-    import {OSM, Vector as VectorSource} from 'ol/source.js';
-    import {Circle as CircleStyle, Fill, Stroke, Style} from 'ol/style.js';*/
-
     var coordenadasIniciales = ol.proj.fromLonLat([-4.472176, 36.716432]);
     //ESTILOS==============================================
 
@@ -41,6 +33,18 @@
       };*/
     //==================================================
 
+    //Función para buscar en un json========================================
+
+    function buscarID_JSON(data_json, id_buscada){
+        $.each(data_json, function(i, v) {
+        if (v.id == id_buscada) {
+            return v;
+        }
+    });
+    }
+
+
+    //=================================================================
 
     //FUNCIONES PARA EL CLUSTER***************************************
     // this function computes a circle style
@@ -54,7 +58,8 @@
                     image: new ol.style.Circle({
                         radius: 8 + size / 10,
                         fill: new ol.style.Fill({
-                            color: 'rgb(97, 151, 255)'
+                            color: 'rgb(0, 52, 107)'
+
                         }),
                         stroke: new ol.style.Stroke({
                             color: 'white',
@@ -163,21 +168,27 @@
             return
         } else {
             var hdms = ol.coordinate.toStringHDMS(ol.proj.toLonLat(coordenadas));
-            content.innerHTML = '<p>You clicked here:</p><code>' + hdms + '</code>';
+            var id = feature.get('features')[0].getId();
+
+            //var datoActual = buscarID_JSON(obj, id);
+
+
+            content.innerHTML = '<p>ID: ' + id + '</p>' +
+                '<p>Coordenadas: ' + hdms + '</p>';
             overlay.setPosition(coordenadas);
 
 
             estilo = new ol.style.Style({
-                    image: new ol.style.Icon({
-                        anchor: [0.5, 46],
-                        anchorXUnits: 'fraction',
-                        anchorYUnits: 'pixels',
-                        opacity: 1,
-                        scale: 0.5,
-                        src: 'http://osm.uma.es/Iconos/Arbol/icon_tree_Negativo.png'
+                image: new ol.style.Icon({
+                    anchor: [0.5, 46],
+                    anchorXUnits: 'fraction',
+                    anchorYUnits: 'pixels',
+                    opacity: 1,
+                    scale: 0.5,
+                    src: 'http://osm.uma.es/Iconos/Arbol/icon_tree_magenta.png'
 
-                    })
-                });
+                })
+            });
             return estilo;
         }
     }
@@ -194,6 +205,7 @@
         var geometry = new ol.geom.Point(coordenadas);
         //document.getElementById('demo').innerHTML = ["Coordenadas Brutas: " + coordenadas];
         var feature = new ol.Feature(geometry);
+        feature.setId(obj[i].id)
         arbolesSource.addFeature(feature);
 
     }
@@ -240,6 +252,7 @@
     closer.onclick = function () {
         overlay.setPosition(undefined);
         closer.blur();
+        selectArbol.getFeatures().clear(); //Deselecciono el objeto
         return false;
     };
     //*****************************************************************************************************************
