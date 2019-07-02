@@ -2,8 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e4165e31-c902-4a9c-aa85-b4f6bf76ca8b" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/FiwareMap/static/images/logo_VSC.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FiwareMap/static/css/popup.css" beforeDir="false" afterPath="$PROJECT_DIR$/FiwareMap/static/css/popup.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FiwareMap/static/images/tree_icon.png" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/FiwareMap/templates/mapa.html" beforeDir="false" afterPath="$PROJECT_DIR$/FiwareMap/templates/mapa.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SmartCampusFIWARE/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/SmartCampusFIWARE/settings.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -38,7 +42,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/SmartCampusFIWARE/urls.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="323">
+            <state>
               <caret line="22" column="25" selection-start-line="22" selection-start-column="25" selection-end-line="22" selection-end-column="25" />
               <folding>
                 <element signature="e#651#683#0" expanded="true" />
@@ -50,8 +54,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/FiwareMap/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1292">
-              <caret line="79" column="12" selection-start-line="79" selection-start-column="12" selection-end-line="79" selection-end-column="12" />
+            <state relative-caret-position="340">
+              <caret line="23" selection-start-line="23" selection-end-line="23" />
               <folding>
                 <element signature="e#0#58#0" expanded="true" />
               </folding>
@@ -62,8 +66,14 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/FiwareMap/templates/mapa.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="273">
-              <caret line="176" column="16" selection-start-line="176" selection-start-column="16" selection-end-line="176" selection-end-column="16" />
+            <state relative-caret-position="109">
+              <caret line="340" column="40" lean-forward="true" selection-start-line="340" selection-start-column="40" selection-end-line="340" selection-end-column="40" />
+              <folding>
+                <element signature="n#style#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#2;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#0;n#div#2;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#1;n#div#2;n#body#0;n#html#0;n#!!top" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -71,17 +81,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/SmartCampusFIWARE/settings.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2057">
-              <caret line="121" column="10" selection-start-line="121" selection-end-line="121" selection-end-column="10" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/FiwareMap/static/css/popup.css">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="357">
-              <caret line="21" column="1" selection-end-line="46" selection-end-column="1" />
+            <state relative-caret-position="405">
+              <caret line="129" column="52" selection-start-line="129" selection-start-column="52" selection-end-line="129" selection-end-column="52" />
             </state>
           </provider>
         </entry>
@@ -98,7 +99,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>urlToken</find>
       <find>urlEntidades</find>
       <find>headersEntidades</find>
       <find>pathEntidades</find>
@@ -121,6 +121,14 @@
       <find>close</find>
       <find>ol.feature</find>
       <find>buscarID_JSON</find>
+      <find>style</find>
+      <find>$</find>
+      <find>popup-content</find>
+      <find>content</find>
+      <find>textInfo</find>
+      <find>fotoInfo</find>
+      <find>foto_Info</find>
+      <find>from</find>
     </findStrings>
     <replaceStrings>
       <replace>url_token</replace>
@@ -145,15 +153,15 @@
         <option value="$PROJECT_DIR$/FiwareMap/templates/popup.css" />
         <option value="$PROJECT_DIR$/FiwareMap/templates/css/popup.css" />
         <option value="$PROJECT_DIR$/SmartCampusFIWARE/settings.py" />
+        <option value="$PROJECT_DIR$/FiwareMap/static/css/popup.css" />
         <option value="$PROJECT_DIR$/FiwareMap/templates/mapa.html" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-117" />
-    <option name="y" value="-22" />
-    <option name="width" value="1939" />
-    <option name="height" value="1099" />
+    <option name="x" value="952" />
+    <option name="width" value="977" />
+    <option name="height" value="1038" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -179,6 +187,13 @@
               <item name="FiwareMap" type="462c0819:PsiDirectoryNode" />
               <item name="static" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="SmartCampusFIWARE" type="b2602c69:ProjectViewProjectNode" />
+              <item name="SmartCampusFIWARE" type="462c0819:PsiDirectoryNode" />
+              <item name="FiwareMap" type="462c0819:PsiDirectoryNode" />
+              <item name="static" type="462c0819:PsiDirectoryNode" />
+              <item name="images" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
@@ -197,15 +212,15 @@
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="D:\Users\Jose\Documents\Universidad\SmartUMA\Repositorios\SmartCampusFIWARE\static\Images" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\Users\Jose\Documents\Universidad\SmartUMA\Repositorios\SmartCampusFIWARE\FiwareMap\static\images" />
       <recent name="D:\Users\Jose\Documents\Universidad\SmartUMA\Repositorios\SmartCampusFIWARE\FiwareMap\static" />
       <recent name="D:\Users\Jose\Documents\Universidad\SmartUMA\Repositorios\SmartCampusFIWARE\FiwareMap" />
       <recent name="D:\Users\Jose\Documents\Universidad\SmartUMA\Repositorios\SmartCampusFIWARE\static\css" />
       <recent name="D:\Users\Jose\Documents\Universidad\SmartUMA\Repositorios\SmartCampusFIWARE\FiwareMap\templates" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Users\Jose\Documents\Universidad\SmartUMA\Repositorios\SmartCampusFIWARE\static\Images" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -273,7 +288,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="72921000" />
+    <option name="totallyTimeSpent" value="90540000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -288,12 +303,12 @@
     <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.15147454" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.15549597" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3281471" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.3069307" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.3069307" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39886847" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -342,19 +357,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/requirements.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="1" column="8" selection-start-line="1" selection-start-column="8" selection-end-line="1" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/FiwareMap/static/images/tree_icon.png">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/SmartCampusFIWARE/urls.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
+        <state>
           <caret line="22" column="25" selection-start-line="22" selection-start-column="25" selection-end-line="22" selection-end-column="25" />
           <folding>
             <element signature="e#651#683#0" expanded="true" />
@@ -364,32 +369,48 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/FiwareMap/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1292">
-          <caret line="79" column="12" selection-start-line="79" selection-start-column="12" selection-end-line="79" selection-end-column="12" />
+        <state relative-caret-position="340">
+          <caret line="23" selection-start-line="23" selection-end-line="23" />
           <folding>
             <element signature="e#0#58#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/requirements.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="1" column="8" selection-start-line="1" selection-start-column="8" selection-end-line="1" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/SmartCampusFIWARE/settings.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2057">
-          <caret line="121" column="10" selection-start-line="121" selection-end-line="121" selection-end-column="10" />
+        <state relative-caret-position="405">
+          <caret line="129" column="52" selection-start-line="129" selection-start-column="52" selection-end-line="129" selection-end-column="52" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/FiwareMap/static/css/popup.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="21" column="1" selection-end-line="46" selection-end-column="1" />
+        <state relative-caret-position="405">
+          <caret line="46" column="5" selection-start-line="46" selection-start-column="5" selection-end-line="46" selection-end-column="5" />
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/FiwareMap/static/images/tree_icon.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/FiwareMap/templates/mapa.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="273">
-          <caret line="176" column="16" selection-start-line="176" selection-start-column="16" selection-end-line="176" selection-end-column="16" />
+        <state relative-caret-position="109">
+          <caret line="340" column="40" lean-forward="true" selection-start-line="340" selection-start-column="40" selection-end-line="340" selection-end-column="40" />
+          <folding>
+            <element signature="n#style#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#2;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#0;n#div#2;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#1;n#div#2;n#body#0;n#html#0;n#!!top" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

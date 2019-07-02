@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% load static %}
 <html>
 <head>
     <title>Mapa</title>
@@ -6,6 +7,20 @@
     <script src="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.3.0/build/ol.js"></script>
 
     <link rel="stylesheet" href="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.3.0/css/ol.css">
+    <link rel="stylesheet" href="{% static 'css/popup.css' %}">
+
+    <!-- CSS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"
+          integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ=="
+          crossorigin="anonymous">
+    <!-- Tema opcional -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css"
+          integrity="sha384-aUGj/X2zp5rLCbBxumKTCw2Z50WgIr1vs/PFN4praOTvYXWlVyh2UtNUU0KAUhAX" crossorigin="anonymous">
+    <!-- JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"
+            integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ=="
+            crossorigin="anonymous"></script>
 
 
 </head>
@@ -13,12 +28,19 @@
 <h1>Mapa campus de la UMA</h1>
 {% csrf_token %}
 
-<div id="map" class="map" style="width: 100%; height: 70%"></div>
+
+<div id="map" class="map" style="width: 100%; height: 400px"></div>
 <div id="popup" class="ol-popup">
     <a href="#" id="popup-closer" class="ol-popup-closer"></a>
     <div id="popup-content"></div>
 </div>
-<div id="photo-info"></div>
+<div id="photo-info" class="row" style="width:100%;">
+    <div id="fotoInfo" style="width: 49%; height: 49%; image-orientation: from-image"></div>
+    <div id="textInfo" style="width:50%" class="texto col-lg-4 col-md-4 col-sm-6 col-xs-12"></div>
+
+</div>
+
+
 <p id="demo"></p>
 <script>
     var coordenadasIniciales = ol.proj.fromLonLat([-4.472176, 36.716432]);
@@ -35,12 +57,14 @@
 
     //Función para buscar en un json========================================
 
-    function buscarID_JSON(data_json, id_buscada) {
-        $.each(data_json, function (i, v) {
-            if (v.id == id_buscada) {
-                return v;
+    function buscar_x_ID_JSON(data_json, id_buscada) {
+        nMax = data_json.length;
+        for (var i = 0; i < nMax; i++) {
+            if (data_json[i].id == id_buscada) {
+                return data_json[i];
             }
-        });
+        }
+        return false;
     }
 
 
@@ -172,12 +196,21 @@
 
             var id = feature.get('features')[0].getId();
 
-            //var datoActual = buscarID_JSON(obj, id);
+            var datoActual = buscar_x_ID_JSON(obj, id);
 
 
             content.innerHTML = '<p>ID: ' + id + '</p>' +
                 '<p>Coordenadas: ' + hdms + '</p>' +
-                '<p>Coordenadas: ' + coord + '</p>'
+                '<p>Coordenadas: ' + coord + '</p>';
+            console.log(datoActual.URLImagen.value)
+
+            text_Info.innerHTML = "<p><ul><li><b>Nombre Común: </b>" + datoActual.NombreVulgar.value + "</li>" +
+                "<li>Nombre Científico: " + datoActual.NombreCientifico.value + "</li>" +
+                "<li>Altura: " + datoActual.Altura.value + "m </li>" +
+                "<li>Diámetro tronco: " + datoActual.DiametroTronco.value + " m</<li>" +
+                "<li>Diámetro Copa: " + datoActual.DiametroCopa.value + "m </li></ul>";
+
+            foto_Info.innerHTML = "<a><img src=" + datoActual.URLImagen.value + " alt=" + id + "style=height=100%; width=100%; image-orientation: from-image;" + "/> </a>"
 
             overlay.setPosition(coordenadas);
 
@@ -236,6 +269,9 @@
     var container = document.getElementById('popup');
     var content = document.getElementById('popup-content');
     var closer = document.getElementById('popup-closer');
+    var info = document.getElementById('photo-info');
+    var text_Info = document.getElementById('textInfo');
+    var foto_Info = document.getElementById('fotoInfo');
 
 
     /**
@@ -295,8 +331,6 @@
     var selectArbol = new ol.interaction.Select({
             layers: [capaArboles],
             style: styleSelectArbol
-
-
         })
     ;
 
@@ -306,13 +340,25 @@
     //Cambios de estilo del cursor para que salga la mano señalando cuando haya un elemento ==============
     map.on('pointermove', function (e) {
         if (e.dragging) {
-            $(element).popover('destroy');
-            return;
+            $(e).popover('destroy');
+            return
         }
         var pixel = map.getEventPixel(e.originalEvent);
         var hit = map.hasFeatureAtPixel(pixel);
         map.getTargetElement().style.cursor = hit ? 'pointer' : '';
     });
+    map.on('click', function (e) {
+        overlay.setPosition(undefined);
+        closer.blur();
+        selectArbol.getFeatures().clear(); //Deselecciono el objeto
+    });
+    map.on('pointerdrag', function (e) {
+        overlay.setPosition(undefined);
+        closer.blur();
+        selectArbol.getFeatures().clear(); //Deselecciono el objeto
+    });
+
+
     //=====================================================================================================
 
     /**
@@ -336,58 +382,7 @@
     //console.log(obj)
 </script>
 
-
 </body>
-
-<style>
-    .ol-popup {
-        position: absolute;
-        background-color: white;
-        -webkit-filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
-        filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
-        padding: 15px;
-        border-radius: 10px;
-        border: 1px solid #cccccc;
-        bottom: 30px;
-        left: -50px;
-        min-width: 280px;
-    }
-
-    .ol-popup:after, .ol-popup:before {
-        top: 100%;
-        border: solid transparent;
-        content: " ";
-        height: 0;
-        width: 0;
-        position: absolute;
-        pointer-events: none;
-    }
-
-    .ol-popup:after {
-        border-top-color: white;
-        border-width: 10px;
-        left: 48px;
-        margin-left: -10px;
-    }
-
-    .ol-popup:before {
-        border-top-color: #cccccc;
-        border-width: 11px;
-        left: 48px;
-        margin-left: -11px;
-    }
-
-    .ol-popup-closer {
-        text-decoration: none;
-        position: absolute;
-        top: 2px;
-        right: 8px;
-    }
-
-    .ol-popup-closer:after {
-        content: "✖";
-    }
-</style>
 
 
 </html>
